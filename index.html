@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>クラスルーレット</title>
+  <title>所見のたね mini</title>
   <style>
     :root {
       --main: #2563eb;
@@ -12,9 +12,13 @@
       --card: #ffffff;
       --text: #1f2937;
       --muted: #6b7280;
-      --danger: #dc2626;
       --border: #d8dee9;
-      --yellow: #facc15;
+      --danger: #dc2626;
+      --danger-bg: #fff1f2;
+      --good-bg: #ecfdf5;
+      --good: #047857;
+      --warn-bg: #fffbeb;
+      --warn: #92400e;
     }
 
     * {
@@ -37,7 +41,7 @@
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 23px;
     }
 
     header p {
@@ -46,25 +50,155 @@
       opacity: 0.9;
     }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 16px 0 8px;
+      font-size: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .notice {
+      background: var(--warn-bg);
+      border: 1px solid #fde68a;
+      color: var(--warn);
       padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .success {
+      background: var(--good-bg);
+      border: 1px solid #bbf7d0;
+      color: var(--good);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    label {
+      font-weight: 700;
+      display: block;
+      margin: 12px 0 6px;
+    }
+
+    .auth-wrap {
+      max-width: 520px;
+      margin: 24px auto;
+    }
+
+    .primary-button {
+      width: 100%;
+      border: none;
+      background: var(--main);
+      color: white;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 5px 0 var(--main-dark);
+      margin-top: 10px;
+    }
+
+    .primary-button:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 var(--main-dark);
+    }
+
+    .secondary-button,
+    .danger-button,
+    .small-button {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 4px 3px;
+    }
+
+    .danger-button {
+      border-color: #fecaca;
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .small-button {
+      font-size: 13px;
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
       background: white;
+      padding: 10px;
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .tab-button {
-      flex: 1;
-      padding: 12px;
       border: 1px solid var(--border);
-      border-radius: 999px;
       background: #f9fafb;
-      color: var(--text);
-      font-weight: 700;
+      border-radius: 999px;
+      padding: 10px 7px;
+      font-size: 13px;
+      font-weight: 800;
       cursor: pointer;
     }
 
@@ -72,12 +206,6 @@
       background: var(--main);
       color: white;
       border-color: var(--main);
-    }
-
-    main {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 16px;
     }
 
     .screen {
@@ -88,501 +216,629 @@
       display: block;
     }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-    }
-
-    .child-card {
-      text-align: center;
-      min-height: 420px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .roulette-title {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 24px;
-    }
-
-    .number-display {
-      width: min(72vw, 330px);
-      height: min(72vw, 330px);
-      margin: 0 auto 26px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 20%, #ffffff, #dbeafe 45%, #93c5fd 100%);
-      border: 10px solid var(--main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(56px, 20vw, 130px);
-      font-weight: 900;
-      color: var(--main-dark);
-      box-shadow: 0 18px 35px rgba(37, 99, 235, 0.24);
-    }
-
-    .number-display.spinning {
-      animation: pulse 0.12s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.04); }
-    }
-
-    .result-message {
-      font-size: 24px;
-      font-weight: 800;
-      min-height: 34px;
-      margin-bottom: 18px;
-    }
-
-    button {
-      font-family: inherit;
-    }
-
-    .primary-button {
-      display: inline-block;
-      border: none;
-      background: var(--main);
-      color: white;
-      border-radius: 14px;
-      padding: 14px 24px;
-      font-size: 18px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 6px 0 var(--main-dark);
-    }
-
-    .primary-button:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 var(--main-dark);
-    }
-
-    .secondary-button {
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      margin: 4px;
-    }
-
-    .danger-button {
-      border: 1px solid #fecaca;
-      background: #fff1f2;
-      color: var(--danger);
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      margin: 4px;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-    }
-
-    h3 {
-      margin: 18px 0 10px;
-      font-size: 16px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin: 10px 0;
-    }
-
-    input[type="number"] {
-      width: 110px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-size: 16px;
-    }
-
-    .radio-group label {
-      display: block;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin: 8px 0;
-      background: #f9fafb;
-      cursor: pointer;
-    }
-
-    .grid {
+    .tag-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
-    .student-check {
+    .tag-check {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 4px;
+      gap: 7px;
       border: 1px solid var(--border);
       background: #f9fafb;
       border-radius: 12px;
-      padding: 10px 6px;
+      padding: 10px;
       font-weight: 700;
       cursor: pointer;
     }
 
-    .student-check.excluded {
-      background: #fee2e2;
-      border-color: #fecaca;
-      color: #991b1b;
+    .tag-check input {
+      width: auto;
     }
 
-    .history-list {
-      max-height: 260px;
-      overflow: auto;
+    .note-card {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #f9fafb;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 10px 0;
+      background: #fff;
     }
 
-    .history-item {
+    .note-head {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
-    .history-item:last-child {
-      border-bottom: none;
-    }
-
-    .badge {
+    .student-badge {
       display: inline-block;
       background: #dbeafe;
       color: var(--main-dark);
-      padding: 4px 8px;
+      padding: 5px 9px;
       border-radius: 999px;
-      font-weight: 800;
+      font-weight: 900;
+      font-size: 14px;
     }
 
-    .notice {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.6;
+    .tag-badge {
+      display: inline-block;
+      background: #f3f4f6;
+      color: #374151;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      margin: 2px;
+    }
+
+    .note-text {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 15px;
     }
 
     .button-row {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
-    .hidden-input {
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px 8px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      background: #f9fafb;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .counter {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .lock-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .file-input {
       display: none;
     }
 
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 21px;
+    @media (min-width: 700px) {
+      .tabs {
+        grid-template-columns: repeat(6, 1fr);
       }
 
-      .roulette-title {
-        font-size: 22px;
+      .tab-button {
+        font-size: 14px;
       }
 
-      .result-message {
-        font-size: 20px;
-      }
-
-      .primary-button {
-        width: 100%;
+      .tag-grid {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>クラスルーレット</h1>
-    <p>出席番号だけで使える、先生用の指名・順番決めサポート</p>
+    <h1>所見のたね mini</h1>
+    <p>名前を使わず、出席番号で日々の観察を残すメモ</p>
   </header>
 
-  <div class="tabs">
-    <button class="tab-button active" id="childTab" onclick="showScreen('child')">子ども画面</button>
-    <button class="tab-button" id="teacherTab" onclick="showScreen('teacher')">先生設定</button>
-  </div>
-
-  <main>
-    <section id="childScreen" class="screen active">
-      <div class="card child-card">
-        <div class="roulette-title">今日のチャレンジャーは…？</div>
-        <div id="numberDisplay" class="number-display">?</div>
-        <div id="resultMessage" class="result-message"></div>
-        <button class="primary-button" id="startButton" onclick="startRoulette()">スタート</button>
-        <p class="muted" id="targetInfo"></p>
-      </div>
-    </section>
-
-    <section id="teacherScreen" class="screen">
-      <div class="card">
-        <h2>基本設定</h2>
-        <div class="form-row">
-          <label for="classCount"><strong>クラス人数：</strong></label>
-          <input type="number" id="classCount" min="1" max="60" />
-          <button class="secondary-button" onclick="saveClassCount()">人数を保存</button>
-        </div>
-        <p class="muted">初期設定は40人です。実名は使わず、出席番号だけで動きます。</p>
-      </div>
-
-      <div class="card">
-        <h2>抽選モード</h2>
-        <div class="radio-group">
-          <label>
-            <input type="radio" name="drawMode" value="random" onchange="saveDrawMode()" />
-            完全ランダム
-          </label>
-          <label>
-            <input type="radio" name="drawMode" value="notYetToday" onchange="saveDrawMode()" />
-            今日まだ当たっていない人を優先
-          </label>
-        </div>
-        <p class="muted">「今日だけ除外」にチェックした番号は、どちらのモードでも出ません。</p>
-      </div>
-
-      <div class="card">
-        <h2>今日だけ除外</h2>
-        <p class="muted">欠席・体調不良・今日は当てない方がよい子などを一時的に外せます。日付が変わると自動でリセットされます。</p>
-        <div class="button-row">
-          <button class="secondary-button" onclick="clearExclusions()">除外を全部外す</button>
-        </div>
-        <div id="studentGrid" class="grid"></div>
-      </div>
-
-      <div class="card">
-        <h2>当選履歴</h2>
-        <div class="button-row">
-          <button class="danger-button" onclick="clearHistory()">履歴リセット</button>
-        </div>
-        <div id="historyList" class="history-list"></div>
-      </div>
-
-      <div class="card">
-        <h2>バックアップ</h2>
-        <p class="muted">データはこの端末のブラウザ内に保存されます。念のため、たまにバックアップを保存してください。</p>
-        <div class="button-row">
-          <button class="secondary-button" onclick="exportBackup()">バックアップ出力</button>
-          <button class="secondary-button" onclick="document.getElementById('importFile').click()">バックアップ読み込み</button>
-          <input id="importFile" class="hidden-input" type="file" accept="application/json" onchange="importBackup(event)" />
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>使うときの注意</h2>
-        <div class="notice">
-          このルーレットは、授業や学級活動での指名・順番決めを補助するためのものです。<br>
-          公平性が強く求められる場面では「完全ランダム」を使ってください。<br>
-          子どもに見せる時は「完全に公平なくじ」と言い切らず、「今日のチャレンジャーを選びます」くらいの表現がおすすめです。
-        </div>
-      </div>
-    </section>
+  <main id="cryptoError" class="hidden">
+    <div class="card">
+      <h2>この環境では起動できません</h2>
+      <p class="muted">
+        このアプリは、メモを暗号化して保存するためにブラウザの暗号化機能を使います。<br>
+        HTTPSのページ、または対応ブラウザで開いてください。
+      </p>
+    </div>
   </main>
 
-  <script>
-    const STORAGE_KEY = "teacherRouletteApp_v1";
+  <main id="setupScreen" class="auth-wrap hidden">
+    <div class="card">
+      <h2>初回設定</h2>
+      <p class="muted">メモを開くためのパスコードを設定します。4桁以上の数字がおすすめです。</p>
 
-    const todayKey = () => {
+      <label for="setupPin">パスコード</label>
+      <input id="setupPin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="4桁以上" />
+
+      <label for="setupPin2">確認用パスコード</label>
+      <input id="setupPin2" type="password" inputmode="numeric" autocomplete="new-password" placeholder="もう一度入力" />
+
+      <button class="primary-button" onclick="setupApp()">設定して始める</button>
+
+      <div class="notice" style="margin-top:14px;">
+        実名・学校名・クラス名は入れない前提のアプリです。<br>
+        メモにも児童名ではなく「12番」「18番」のように番号で残す運用がおすすめです。
+      </div>
+    </div>
+  </main>
+
+  <main id="unlockScreen" class="auth-wrap hidden">
+    <div class="card">
+      <h2>ロック解除</h2>
+      <p class="muted">設定したパスコードを入力してください。</p>
+
+      <label for="unlockPin">パスコード</label>
+      <input id="unlockPin" type="password" inputmode="numeric" autocomplete="current-password" />
+
+      <button class="primary-button" onclick="unlockApp()">開く</button>
+
+      <p id="unlockError" class="muted"></p>
+
+      <div class="button-row">
+        <button class="danger-button" onclick="resetFromLock()">パスコードを忘れた／全データ削除</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="appScreen" class="hidden">
+    <div class="lock-bar">
+      <span>端末内に暗号化保存中</span>
+      <button class="small-button" onclick="lockNow()">ロック</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-button active" id="tabWrite" onclick="showScreen('write')">書く</button>
+      <button class="tab-button" id="tabToday" onclick="showScreen('today')">今日</button>
+      <button class="tab-button" id="tabStudent" onclick="showScreen('student')">児童別</button>
+      <button class="tab-button" id="tabTag" onclick="showScreen('tag')">タグ別</button>
+      <button class="tab-button" id="tabShoken" onclick="showScreen('shoken')">所見候補</button>
+      <button class="tab-button" id="tabSettings" onclick="showScreen('settings')">設定</button>
+    </div>
+
+    <main>
+      <section id="screenWrite" class="screen active">
+        <div class="card">
+          <h2 id="formTitle">メモを書く</h2>
+
+          <form id="noteForm" onsubmit="saveNote(event)">
+            <label for="studentNo">児童番号</label>
+            <select id="studentNo"></select>
+
+            <label>タグ</label>
+            <div id="tagCheckboxes" class="tag-grid"></div>
+
+            <label for="noteText">メモ</label>
+            <textarea id="noteText" maxlength="600" placeholder="例：係活動で周りに声をかけ、困っている子を自然に手伝っていた。"></textarea>
+            <div class="counter"><span id="textCount">0</span>/600</div>
+
+            <button class="primary-button" type="submit">保存</button>
+            <button class="secondary-button hidden" type="button" id="cancelEditButton" onclick="cancelEdit()">編集をキャンセル</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>記録ルール</h2>
+          <div class="notice">
+            ・本名、学校名、クラス名は書かない<br>
+            ・相手の児童も「18番」のように番号で書く<br>
+            ・家庭事情、診断名、保護者名、連絡先は書かない<br>
+            ・感情ではなく「見た事実」「次に見る点」を短く残す
+          </div>
+        </div>
+      </section>
+
+      <section id="screenToday" class="screen">
+        <div class="card">
+          <h2>今日のメモ</h2>
+          <div class="button-row">
+            <button class="secondary-button" onclick="copyCurrentList('today')">今日のメモをコピー</button>
+          </div>
+          <div id="todayList"></div>
+        </div>
+      </section>
+
+      <section id="screenStudent" class="screen">
+        <div class="card">
+          <h2>児童別に見る</h2>
+          <label for="studentFilter">児童番号</label>
+          <select id="studentFilter" onchange="renderStudentView()"></select>
+          <div class="button-row">
+            <button class="secondary-button" onclick="copyCurrentList('student')">この児童のメモをコピー</button>
+          </div>
+          <div id="studentList"></div>
+        </div>
+      </section>
+
+      <section id="screenTag" class="screen">
+        <div class="card">
+          <h2>タグ別に見る</h2>
+          <label for="tagFilter">タグ</label>
+          <select id="tagFilter" onchange="renderTagView()"></select>
+          <div class="button-row">
+            <button class="secondary-button" onclick="copyCurrentList('tag')">このタグのメモをコピー</button>
+          </div>
+          <div id="tagList"></div>
+        </div>
+      </section>
+
+      <section id="screenShoken" class="screen">
+        <div class="card">
+          <h2>所見候補だけ見る</h2>
+          <p class="muted">「所見候補」タグがついたメモだけを表示します。</p>
+          <div class="button-row">
+            <button class="secondary-button" onclick="copyCurrentList('shoken')">所見候補をコピー</button>
+          </div>
+          <div id="shokenList"></div>
+        </div>
+      </section>
+
+      <section id="screenSettings" class="screen">
+        <div class="card">
+          <h2>基本設定</h2>
+
+          <label for="classCount">クラス人数</label>
+          <input id="classCount" type="number" min="1" max="60" />
+          <button class="secondary-button" onclick="saveClassCount()">人数を保存</button>
+
+          <label for="autoLockMinutes">自動ロック</label>
+          <select id="autoLockMinutes" onchange="saveAutoLock()">
+            <option value="3">3分</option>
+            <option value="5">5分</option>
+            <option value="10">10分</option>
+            <option value="30">30分</option>
+          </select>
+        </div>
+
+        <div class="card">
+          <h2>タグ編集</h2>
+          <p class="muted">不要なタグは消してOK。1行に1つずつ入力します。</p>
+          <textarea id="tagEditor"></textarea>
+          <button class="secondary-button" onclick="saveTags()">タグを保存</button>
+        </div>
+
+        <div class="card">
+          <h2>バックアップ</h2>
+          <p class="muted">
+            バックアップも暗号化された状態で出力します。復元には、その時のパスコードが必要です。
+          </p>
+          <div class="button-row">
+            <button class="secondary-button" onclick="exportBackup()">暗号化バックアップ出力</button>
+            <button class="secondary-button" onclick="document.getElementById('importFile').click()">バックアップ読み込み</button>
+            <input id="importFile" class="file-input" type="file" accept="application/json" onchange="importBackup(event)" />
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>データ削除</h2>
+          <p class="muted">年度替わりや使用終了時に、この端末内の保存データを削除できます。</p>
+          <button class="danger-button" onclick="deleteAllData()">この端末のデータをすべて削除</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const META_KEY = "shokenSeedMini_meta_v1";
+    const DATA_KEY = "shokenSeedMini_data_v1";
+    const ITERATIONS = 150000;
+
+    const defaultTags = [
+      "がんばり",
+      "学習",
+      "生活",
+      "友人関係",
+      "気になる",
+      "所見候補",
+      "面談で確認"
+    ];
+
+    let state = null;
+    let currentKey = null;
+    let editingNoteId = null;
+    let lockTimer = null;
+    let currentScreen = "write";
+
+    function supportsCrypto() {
+      return !!(window.crypto && window.crypto.subtle && window.crypto.getRandomValues);
+    }
+
+    function todayKey() {
       const d = new Date();
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
       const day = String(d.getDate()).padStart(2, "0");
       return `${y}-${m}-${day}`;
-    };
+    }
 
-    const defaultState = {
-      classCount: 40,
-      drawMode: "random",
-      exclusionDate: todayKey(),
-      exclusions: [],
-      history: []
-    };
+    function newId() {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      return String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+    }
 
-    let state = loadState();
+    function defaultState() {
+      return {
+        version: 1,
+        classCount: 40,
+        tags: [...defaultTags],
+        notes: [],
+        settings: {
+          autoLockMinutes: 5
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
 
-    function loadState() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return { ...defaultState };
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      for (let i = 0; i < bytes.byteLength; i += 0x8000) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      }
+      return btoa(binary);
+    }
 
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    function randomSalt() {
+      const salt = new Uint8Array(16);
+      crypto.getRandomValues(salt);
+      return arrayBufferToBase64(salt.buffer);
+    }
+
+    async function deriveKey(pin, saltBase64, iterations = ITERATIONS) {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        "raw",
+        enc.encode(pin),
+        "PBKDF2",
+        false,
+        ["deriveKey"]
+      );
+
+      return crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: base64ToArrayBuffer(saltBase64),
+          iterations,
+          hash: "SHA-256"
+        },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+      );
+    }
+
+    async function encryptState(data) {
+      const iv = new Uint8Array(12);
+      crypto.getRandomValues(iv);
+
+      const encoded = new TextEncoder().encode(JSON.stringify(data));
+      const cipherBuffer = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv },
+        currentKey,
+        encoded
+      );
+
+      return {
+        iv: arrayBufferToBase64(iv.buffer),
+        cipher: arrayBufferToBase64(cipherBuffer)
+      };
+    }
+
+    async function decryptState(encrypted) {
+      const iv = new Uint8Array(base64ToArrayBuffer(encrypted.iv));
+      const cipher = base64ToArrayBuffer(encrypted.cipher);
+
+      const plainBuffer = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv },
+        currentKey,
+        cipher
+      );
+
+      const text = new TextDecoder().decode(plainBuffer);
+      return JSON.parse(text);
+    }
+
+    async function saveEncrypted() {
+      if (!state || !currentKey) return;
+
+      state.updatedAt = new Date().toISOString();
+      const encrypted = await encryptState(state);
+      localStorage.setItem(DATA_KEY, JSON.stringify(encrypted));
+      resetAutoLockTimer();
+    }
+
+    function getMeta() {
+      const raw = localStorage.getItem(META_KEY);
+      if (!raw) return null;
       try {
-        const parsed = JSON.parse(saved);
-        const merged = { ...defaultState, ...parsed };
-
-        if (merged.exclusionDate !== todayKey()) {
-          merged.exclusionDate = todayKey();
-          merged.exclusions = [];
-        }
-
-        return merged;
+        return JSON.parse(raw);
       } catch {
-        return { ...defaultState };
+        return null;
       }
     }
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    function setVisible(id, visible) {
+      document.getElementById(id).classList.toggle("hidden", !visible);
+    }
+
+    function initApp() {
+      if (!supportsCrypto()) {
+        setVisible("cryptoError", true);
+        return;
+      }
+
+      const meta = getMeta();
+      if (!meta) {
+        setVisible("setupScreen", true);
+      } else {
+        setVisible("unlockScreen", true);
+      }
+    }
+
+    async function setupApp() {
+      const pin = document.getElementById("setupPin").value.trim();
+      const pin2 = document.getElementById("setupPin2").value.trim();
+
+      if (!/^\d{4,12}$/.test(pin)) {
+        alert("パスコードは4〜12桁の数字で設定してください。");
+        return;
+      }
+
+      if (pin !== pin2) {
+        alert("確認用パスコードが一致しません。");
+        return;
+      }
+
+      const salt = randomSalt();
+      const meta = {
+        app: "shoken-seed-mini",
+        version: 1,
+        salt,
+        iterations: ITERATIONS,
+        createdAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(META_KEY, JSON.stringify(meta));
+
+      currentKey = await deriveKey(pin, salt, ITERATIONS);
+      state = defaultState();
+
+      await saveEncrypted();
+      openApp();
+    }
+
+    async function unlockApp() {
+      const pin = document.getElementById("unlockPin").value.trim();
+      const error = document.getElementById("unlockError");
+      error.textContent = "";
+
+      const meta = getMeta();
+      if (!meta) {
+        alert("初回設定が見つかりません。");
+        location.reload();
+        return;
+      }
+
+      try {
+        currentKey = await deriveKey(pin, meta.salt, meta.iterations || ITERATIONS);
+
+        const encryptedRaw = localStorage.getItem(DATA_KEY);
+        if (!encryptedRaw) {
+          state = defaultState();
+          await saveEncrypted();
+        } else {
+          state = await decryptState(JSON.parse(encryptedRaw));
+        }
+
+        state.tags = Array.isArray(state.tags) && state.tags.length ? state.tags : [...defaultTags];
+        state.notes = Array.isArray(state.notes) ? state.notes : [];
+        state.settings = state.settings || { autoLockMinutes: 5 };
+
+        openApp();
+      } catch {
+        currentKey = null;
+        state = null;
+        error.textContent = "パスコードが違うか、データを開けませんでした。";
+      }
+    }
+
+    function openApp() {
+      setVisible("setupScreen", false);
+      setVisible("unlockScreen", false);
+      setVisible("appScreen", true);
+      document.getElementById("setupPin").value = "";
+      document.getElementById("setupPin2").value = "";
+      document.getElementById("unlockPin").value = "";
+      renderAll();
+      resetAutoLockTimer();
+    }
+
+    async function lockNow() {
+      await saveEncrypted();
+      currentKey = null;
+      state = null;
+      editingNoteId = null;
+      clearTimeout(lockTimer);
+
+      setVisible("appScreen", false);
+      setVisible("setupScreen", false);
+      setVisible("unlockScreen", true);
+      document.getElementById("unlockPin").value = "";
+      document.getElementById("unlockError").textContent = "";
+    }
+
+    function resetAutoLockTimer() {
+      clearTimeout(lockTimer);
+      if (!state) return;
+
+      const minutes = Number(state.settings?.autoLockMinutes || 5);
+      lockTimer = setTimeout(() => {
+        lockNow();
+      }, minutes * 60 * 1000);
+    }
+
+    ["click", "keydown", "touchstart", "input"].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (state && currentKey) resetAutoLockTimer();
+      }, { passive: true });
+    });
+
+    function showScreen(name) {
+      currentScreen = name;
+
+      ["write", "today", "student", "tag", "shoken", "settings"].forEach(screen => {
+        document.getElementById("screen" + capitalize(screen)).classList.toggle("active", screen === name);
+        document.getElementById("tab" + capitalize(screen)).classList.toggle("active", screen === name);
+      });
+
       renderAll();
     }
 
-    function showScreen(screen) {
-      document.getElementById("childScreen").classList.toggle("active", screen === "child");
-      document.getElementById("teacherScreen").classList.toggle("active", screen === "teacher");
-      document.getElementById("childTab").classList.toggle("active", screen === "child");
-      document.getElementById("teacherTab").classList.toggle("active", screen === "teacher");
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
     function numbers() {
       return Array.from({ length: state.classCount }, (_, i) => i + 1);
     }
 
-    function todayHistoryNumbers() {
-      const today = todayKey();
-      return state.history
-        .filter(item => item.dateKey === today)
-        .map(item => item.number);
-    }
-
-    function availableNumbers() {
-      return numbers().filter(n => !state.exclusions.includes(n));
-    }
-
-    function candidatesForDraw() {
-      const available = availableNumbers();
-
-      if (state.drawMode === "notYetToday") {
-        const already = todayHistoryNumbers();
-        const notYet = available.filter(n => !already.includes(n));
-        return notYet.length > 0 ? notYet : available;
-      }
-
-      return available;
-    }
-
-    function randomPick(list) {
-      return list[Math.floor(Math.random() * list.length)];
-    }
-
-    function startRoulette() {
-      const candidates = candidatesForDraw();
-
-      if (candidates.length === 0) {
-        alert("抽選できる番号がありません。除外設定を確認してください。");
-        return;
-      }
-
-      const display = document.getElementById("numberDisplay");
-      const result = document.getElementById("resultMessage");
-      const button = document.getElementById("startButton");
-
-      button.disabled = true;
-      result.textContent = "";
-      display.classList.add("spinning");
-
-      let count = 0;
-      const interval = setInterval(() => {
-        display.textContent = randomPick(candidates);
-        count++;
-
-        if (count > 22) {
-          clearInterval(interval);
-
-          const winner = randomPick(candidates);
-          display.textContent = winner;
-          display.classList.remove("spinning");
-          result.textContent = `${winner}番、お願いします！`;
-
-          addHistory(winner);
-          button.disabled = false;
-        }
-      }, 70);
-    }
-
-    function addHistory(number) {
-      const now = new Date();
-      state.history.unshift({
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        number,
-        mode: state.drawMode,
-        dateKey: todayKey(),
-        createdAt: now.toISOString()
-      });
-
-      state.history = state.history.slice(0, 300);
-      saveState();
-    }
-
-    function saveClassCount() {
-      const input = document.getElementById("classCount");
-      const value = Number(input.value);
-
-      if (!Number.isInteger(value) || value < 1 || value > 60) {
-        alert("クラス人数は1〜60人で入力してください。");
-        return;
-      }
-
-      state.classCount = value;
-      state.exclusions = state.exclusions.filter(n => n <= value);
-      saveState();
-      alert("クラス人数を保存しました。");
-    }
-
-    function saveDrawMode() {
-      const selected = document.querySelector("input[name='drawMode']:checked");
-      state.drawMode = selected ? selected.value : "random";
-      saveState();
-    }
-
-    function toggleExclusion(number) {
-      if (state.exclusions.includes(number)) {
-        state.exclusions = state.exclusions.filter(n => n !== number);
-      } else {
-        state.exclusions.push(number);
-      }
-      saveState();
-    }
-
-    function clearExclusions() {
-      if (!confirm("今日だけ除外をすべて外しますか？")) return;
-      state.exclusions = [];
-      saveState();
-    }
-
-    function clearHistory() {
-      if (!confirm("当選履歴をすべて削除しますか？")) return;
-      state.history = [];
-      saveState();
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function formatDateTime(iso) {
@@ -594,85 +850,365 @@
       return `${m}/${day} ${hh}:${mm}`;
     }
 
-    function modeLabel(mode) {
-      if (mode === "notYetToday") return "未当選優先";
-      return "完全ランダム";
+    function sortedNotes(list) {
+      return [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
-    function renderStudentGrid() {
-      const grid = document.getElementById("studentGrid");
-      grid.innerHTML = "";
+    function allTagsUsed() {
+      const used = new Set(state.tags);
+      state.notes.forEach(note => {
+        (note.tags || []).forEach(tag => used.add(tag));
+      });
+      return [...used];
+    }
 
-      numbers().forEach(number => {
+    function renderStudentOptions() {
+      const selects = [
+        document.getElementById("studentNo"),
+        document.getElementById("studentFilter")
+      ];
+
+      selects.forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = "";
+
+        numbers().forEach(n => {
+          const opt = document.createElement("option");
+          opt.value = n;
+          opt.textContent = `${n}番`;
+          select.appendChild(opt);
+        });
+
+        if (currentValue && Number(currentValue) <= state.classCount) {
+          select.value = currentValue;
+        }
+      });
+    }
+
+    function renderTagCheckboxes() {
+      const box = document.getElementById("tagCheckboxes");
+      box.innerHTML = "";
+
+      state.tags.forEach(tag => {
         const label = document.createElement("label");
-        label.className = "student-check";
-        if (state.exclusions.includes(number)) label.classList.add("excluded");
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = state.exclusions.includes(number);
-        checkbox.onchange = () => toggleExclusion(number);
-
-        const span = document.createElement("span");
-        span.textContent = `${number}番`;
-
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        grid.appendChild(label);
+        label.className = "tag-check";
+        label.innerHTML = `
+          <input type="checkbox" name="noteTag" value="${escapeHtml(tag)}">
+          <span>${escapeHtml(tag)}</span>
+        `;
+        box.appendChild(label);
       });
     }
 
-    function renderHistory() {
-      const list = document.getElementById("historyList");
+    function renderTagFilter() {
+      const select = document.getElementById("tagFilter");
+      const current = select.value;
+      select.innerHTML = "";
 
-      if (state.history.length === 0) {
-        list.innerHTML = `<div class="history-item"><span class="muted">まだ履歴はありません。</span></div>`;
-        return;
-      }
-
-      list.innerHTML = "";
-      state.history.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "history-item";
-        div.innerHTML = `
-          <span><span class="badge">${item.number}番</span> ${modeLabel(item.mode)}</span>
-          <span class="muted">${formatDateTime(item.createdAt)}</span>
-        `;
-        list.appendChild(div);
+      allTagsUsed().forEach(tag => {
+        const opt = document.createElement("option");
+        opt.value = tag;
+        opt.textContent = tag;
+        select.appendChild(opt);
       });
+
+      if (current) select.value = current;
     }
 
     function renderSettings() {
       document.getElementById("classCount").value = state.classCount;
+      document.getElementById("autoLockMinutes").value = String(state.settings?.autoLockMinutes || 5);
+      document.getElementById("tagEditor").value = state.tags.join("\n");
+    }
 
-      const modeRadio = document.querySelector(`input[name='drawMode'][value='${state.drawMode}']`);
-      if (modeRadio) modeRadio.checked = true;
+    function noteToText(note) {
+      const tags = (note.tags || []).map(t => `#${t}`).join(" ");
+      return `${note.studentNo}番　${formatDateTime(note.createdAt)}　${tags}\n${note.text}`;
+    }
 
-      const candidates = candidatesForDraw();
-      const info = document.getElementById("targetInfo");
-      info.textContent = `抽選対象：${candidates.length}人 ／ 除外：${state.exclusions.length}人`;
+    function renderNoteList(containerId, list) {
+      const container = document.getElementById(containerId);
+
+      if (!list.length) {
+        container.innerHTML = `<div class="empty">まだメモはありません。</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+
+      sortedNotes(list).forEach(note => {
+        const div = document.createElement("div");
+        div.className = "note-card";
+
+        const tagHtml = (note.tags || [])
+          .map(tag => `<span class="tag-badge">${escapeHtml(tag)}</span>`)
+          .join("");
+
+        div.innerHTML = `
+          <div class="note-head">
+            <span class="student-badge">${note.studentNo}番</span>
+            <span class="muted">${formatDateTime(note.createdAt)}</span>
+          </div>
+          <div>${tagHtml}</div>
+          <div class="note-text">${escapeHtml(note.text)}</div>
+          <div class="button-row">
+            <button class="small-button" onclick="editNote('${note.id}')">編集</button>
+            <button class="small-button" onclick="copySingleNote('${note.id}')">コピー</button>
+            <button class="small-button" onclick="deleteNote('${note.id}')">削除</button>
+          </div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function renderTodayView() {
+      const list = state.notes.filter(note => note.dateKey === todayKey());
+      renderNoteList("todayList", list);
+    }
+
+    function renderStudentView() {
+      const no = Number(document.getElementById("studentFilter").value || 1);
+      const list = state.notes.filter(note => Number(note.studentNo) === no);
+      renderNoteList("studentList", list);
+    }
+
+    function renderTagView() {
+      const tag = document.getElementById("tagFilter").value;
+      const list = state.notes.filter(note => (note.tags || []).includes(tag));
+      renderNoteList("tagList", list);
+    }
+
+    function renderShokenView() {
+      const list = state.notes.filter(note => (note.tags || []).includes("所見候補"));
+      renderNoteList("shokenList", list);
     }
 
     function renderAll() {
+      if (!state) return;
+      renderStudentOptions();
+      renderTagCheckboxes();
+      renderTagFilter();
       renderSettings();
-      renderStudentGrid();
-      renderHistory();
+      renderTodayView();
+      renderStudentView();
+      renderTagView();
+      renderShokenView();
+      updateTextCount();
+    }
+
+    document.addEventListener("input", (e) => {
+      if (e.target && e.target.id === "noteText") {
+        updateTextCount();
+      }
+    });
+
+    function updateTextCount() {
+      const text = document.getElementById("noteText");
+      const count = document.getElementById("textCount");
+      if (text && count) count.textContent = text.value.length;
+    }
+
+    async function saveNote(event) {
+      event.preventDefault();
+
+      const studentNo = Number(document.getElementById("studentNo").value);
+      const text = document.getElementById("noteText").value.trim();
+      const checkedTags = [...document.querySelectorAll("input[name='noteTag']:checked")]
+        .map(input => input.value);
+
+      if (!text) {
+        alert("メモを入力してください。");
+        return;
+      }
+
+      if (checkedTags.length === 0) {
+        alert("タグを1つ以上選んでください。");
+        return;
+      }
+
+      if (editingNoteId) {
+        const note = state.notes.find(n => n.id === editingNoteId);
+        if (note) {
+          note.studentNo = studentNo;
+          note.tags = checkedTags;
+          note.text = text;
+          note.updatedAt = new Date().toISOString();
+        }
+      } else {
+        state.notes.unshift({
+          id: newId(),
+          studentNo,
+          tags: checkedTags,
+          text,
+          dateKey: todayKey(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
+
+      await saveEncrypted();
+      clearForm();
+      renderAll();
+      alert("保存しました。");
+    }
+
+    function clearForm() {
+      editingNoteId = null;
+      document.getElementById("formTitle").textContent = "メモを書く";
+      document.getElementById("noteText").value = "";
+      document.querySelectorAll("input[name='noteTag']").forEach(input => input.checked = false);
+      document.getElementById("cancelEditButton").classList.add("hidden");
+      updateTextCount();
+    }
+
+    function cancelEdit() {
+      clearForm();
+    }
+
+    function editNote(id) {
+      const note = state.notes.find(n => n.id === id);
+      if (!note) return;
+
+      editingNoteId = id;
+      showScreen("write");
+
+      document.getElementById("formTitle").textContent = "メモを編集";
+      document.getElementById("studentNo").value = note.studentNo;
+      document.getElementById("noteText").value = note.text;
+      document.getElementById("cancelEditButton").classList.remove("hidden");
+
+      document.querySelectorAll("input[name='noteTag']").forEach(input => {
+        input.checked = (note.tags || []).includes(input.value);
+      });
+
+      updateTextCount();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function deleteNote(id) {
+      if (!confirm("このメモを削除しますか？")) return;
+
+      state.notes = state.notes.filter(note => note.id !== id);
+      await saveEncrypted();
+      renderAll();
+    }
+
+    async function saveClassCount() {
+      const value = Number(document.getElementById("classCount").value);
+
+      if (!Number.isInteger(value) || value < 1 || value > 60) {
+        alert("クラス人数は1〜60人で入力してください。");
+        return;
+      }
+
+      state.classCount = value;
+
+      state.notes = state.notes.filter(note => Number(note.studentNo) <= value);
+
+      await saveEncrypted();
+      renderAll();
+      alert("クラス人数を保存しました。");
+    }
+
+    async function saveAutoLock() {
+      state.settings.autoLockMinutes = Number(document.getElementById("autoLockMinutes").value);
+      await saveEncrypted();
+      resetAutoLockTimer();
+      alert("自動ロック時間を保存しました。");
+    }
+
+    async function saveTags() {
+      const raw = document.getElementById("tagEditor").value;
+      const tags = raw
+        .split("\n")
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      const uniqueTags = [...new Set(tags)];
+
+      if (!uniqueTags.length) {
+        alert("タグは1つ以上必要です。");
+        return;
+      }
+
+      state.tags = uniqueTags;
+      await saveEncrypted();
+      renderAll();
+      alert("タグを保存しました。");
+    }
+
+    function getListByType(type) {
+      if (type === "today") {
+        return state.notes.filter(note => note.dateKey === todayKey());
+      }
+
+      if (type === "student") {
+        const no = Number(document.getElementById("studentFilter").value || 1);
+        return state.notes.filter(note => Number(note.studentNo) === no);
+      }
+
+      if (type === "tag") {
+        const tag = document.getElementById("tagFilter").value;
+        return state.notes.filter(note => (note.tags || []).includes(tag));
+      }
+
+      if (type === "shoken") {
+        return state.notes.filter(note => (note.tags || []).includes("所見候補"));
+      }
+
+      return [];
+    }
+
+    async function copyCurrentList(type) {
+      const list = sortedNotes(getListByType(type));
+      if (!list.length) {
+        alert("コピーするメモがありません。");
+        return;
+      }
+
+      const text = list.map(noteToText).join("\n\n");
+      await copyText(text);
+    }
+
+    async function copySingleNote(id) {
+      const note = state.notes.find(n => n.id === id);
+      if (!note) return;
+      await copyText(noteToText(note));
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("コピーしました。");
+      } catch {
+        window.prompt("コピーしてください", text);
+      }
     }
 
     function exportBackup() {
-      const data = {
-        app: "teacher-roulette-app",
+      const meta = localStorage.getItem(META_KEY);
+      const encrypted = localStorage.getItem(DATA_KEY);
+
+      if (!meta || !encrypted) {
+        alert("バックアップできるデータがありません。");
+        return;
+      }
+
+      const payload = {
+        app: "shoken-seed-mini",
         version: 1,
         exportedAt: new Date().toISOString(),
-        state
+        meta: JSON.parse(meta),
+        encrypted: JSON.parse(encrypted)
       };
 
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = `class-roulette-backup-${todayKey()}.json`;
+      a.download = `shoken-seed-mini-backup-${todayKey()}.json`;
       a.click();
 
       URL.revokeObjectURL(url);
@@ -683,29 +1219,23 @@
       if (!file) return;
 
       const reader = new FileReader();
+
       reader.onload = () => {
         try {
-          const data = JSON.parse(reader.result);
+          const payload = JSON.parse(reader.result);
 
-          if (!data.state) {
+          if (payload.app !== "shoken-seed-mini" || !payload.meta || !payload.encrypted) {
             alert("バックアップファイルの形式が違います。");
             return;
           }
 
-          if (!confirm("現在のデータをバックアップ内容で上書きしますか？")) return;
+          if (!confirm("現在のデータを、バックアップ内容で上書きしますか？")) return;
 
-          state = {
-            ...defaultState,
-            ...data.state
-          };
+          localStorage.setItem(META_KEY, JSON.stringify(payload.meta));
+          localStorage.setItem(DATA_KEY, JSON.stringify(payload.encrypted));
 
-          if (state.exclusionDate !== todayKey()) {
-            state.exclusionDate = todayKey();
-            state.exclusions = [];
-          }
-
-          saveState();
-          alert("バックアップを読み込みました。");
+          alert("読み込みました。バックアップ作成時のパスコードで開いてください。");
+          location.reload();
         } catch {
           alert("読み込みに失敗しました。");
         }
@@ -715,7 +1245,26 @@
       event.target.value = "";
     }
 
-    renderAll();
+    function deleteAllData() {
+      if (!confirm("この端末内のメモをすべて削除します。本当に削除しますか？")) return;
+      if (!confirm("元に戻せません。完全に削除しますか？")) return;
+
+      localStorage.removeItem(META_KEY);
+      localStorage.removeItem(DATA_KEY);
+      alert("削除しました。");
+      location.reload();
+    }
+
+    function resetFromLock() {
+      if (!confirm("パスコードを忘れた場合、保存済みメモは復元できません。全データを削除しますか？")) return;
+      if (!confirm("本当にすべて削除しますか？")) return;
+
+      localStorage.removeItem(META_KEY);
+      localStorage.removeItem(DATA_KEY);
+      location.reload();
+    }
+
+    initApp();
   </script>
 </body>
 </html>
