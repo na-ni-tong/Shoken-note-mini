@@ -349,7 +349,7 @@
 <body>
   <header>
     <h1>所見のたね mini</h1>
-    <p>名前を使わず、出席番号で日々の観察を残すメモ</p>
+    <p>出席番号で日々の観察を残すメモ</p>
   </header>
 
   <main id="cryptoError" class="hidden">
@@ -407,8 +407,8 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-button active" id="tabWrite" onclick="showScreen('write')">書く</button>
-      <button class="tab-button" id="tabToday" onclick="showScreen('today')">今日</button>
+      <button class="tab-button active" id="tabWrite" onclick="showScreen('write')">記録する</button>
+      <button class="tab-button" id="tabToday" onclick="showScreen('today')">今日の記録</button>
       <button class="tab-button" id="tabStudent" onclick="showScreen('student')">児童別</button>
       <button class="tab-button" id="tabTag" onclick="showScreen('tag')">タグ別</button>
       <button class="tab-button" id="tabShoken" onclick="showScreen('shoken')">所見候補</button>
@@ -543,13 +543,10 @@
     const ITERATIONS = 150000;
 
     const defaultTags = [
-      "がんばり",
       "学習",
       "生活",
       "友人関係",
-      "気になる",
-      "所見候補",
-      "面談で確認"
+      "行事"
     ];
 
     let state = null;
