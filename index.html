@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>クラスルーレット</title>
+  <style>
+    :root {
+      --main: #2563eb;
+      --main-dark: #1d4ed8;
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --danger: #dc2626;
+      --border: #d8dee9;
+      --yellow: #facc15;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--main), #60a5fa);
+      color: white;
+      padding: 18px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f9fafb;
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-button.active {
+      background: var(--main);
+      color: white;
+      border-color: var(--main);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .child-card {
+      text-align: center;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .roulette-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .number-display {
+      width: min(72vw, 330px);
+      height: min(72vw, 330px);
+      margin: 0 auto 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #dbeafe 45%, #93c5fd 100%);
+      border: 10px solid var(--main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(56px, 20vw, 130px);
+      font-weight: 900;
+      color: var(--main-dark);
+      box-shadow: 0 18px 35px rgba(37, 99, 235, 0.24);
+    }
+
+    .number-display.spinning {
+      animation: pulse 0.12s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    .result-message {
+      font-size: 24px;
+      font-weight: 800;
+      min-height: 34px;
+      margin-bottom: 18px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .primary-button {
+      display: inline-block;
+      border: none;
+      background: var(--main);
+      color: white;
+      border-radius: 14px;
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 0 var(--main-dark);
+    }
+
+    .primary-button:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--main-dark);
+    }
+
+    .secondary-button {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .danger-button {
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: var(--danger);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      font-size: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    input[type="number"] {
+      width: 110px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 16px;
+    }
+
+    .radio-group label {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 8px 0;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .student-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 10px 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .student-check.excluded {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .history-list {
+      max-height: 260px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f9fafb;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: var(--main-dark);
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .notice {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 21px;
+      }
+
+      .roulette-title {
+        font-size: 22px;
+      }
+
+      .result-message {
+        font-size: 20px;
+      }
+
+      .primary-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>クラスルーレット</h1>
+    <p>出席番号だけで使える、先生用の指名・順番決めサポート</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-button active" id="childTab" onclick="showScreen('child')">子ども画面</button>
+    <button class="tab-button" id="teacherTab" onclick="showScreen('teacher')">先生設定</button>
+  </div>
+
+  <main>
+    <section id="childScreen" class="screen active">
+      <div class="card child-card">
+        <div class="roulette-title">今日のチャレンジャーは…？</div>
+        <div id="numberDisplay" class="number-display">?</div>
+        <div id="resultMessage" class="result-message"></div>
+        <button class="primary-button" id="startButton" onclick="startRoulette()">スタート</button>
+        <p class="muted" id="targetInfo"></p>
+      </div>
+    </section>
+
+    <section id="teacherScreen" class="screen">
+      <div class="card">
+        <h2>基本設定</h2>
+        <div class="form-row">
+          <label for="classCount"><strong>クラス人数：</strong></label>
+          <input type="number" id="classCount" min="1" max="60" />
+          <button class="secondary-button" onclick="saveClassCount()">人数を保存</button>
+        </div>
+        <p class="muted">初期設定は40人です。実名は使わず、出席番号だけで動きます。</p>
+      </div>
+
+      <div class="card">
+        <h2>抽選モード</h2>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="drawMode" value="random" onchange="saveDrawMode()" />
+            完全ランダム
+          </label>
+          <label>
+            <input type="radio" name="drawMode" value="notYetToday" onchange="saveDrawMode()" />
+            今日まだ当たっていない人を優先
+          </label>
+        </div>
+        <p class="muted">「今日だけ除外」にチェックした番号は、どちらのモードでも出ません。</p>
+      </div>
+
+      <div class="card">
+        <h2>今日だけ除外</h2>
+        <p class="muted">欠席・体調不良・今日は当てない方がよい子などを一時的に外せます。日付が変わると自動でリセットされます。</p>
+        <div class="button-row">
+          <button class="secondary-button" onclick="clearExclusions()">除外を全部外す</button>
+        </div>
+        <div id="studentGrid" class="grid"></div>
+      </div>
+
+      <div class="card">
+        <h2>当選履歴</h2>
+        <div class="button-row">
+          <button class="danger-button" onclick="clearHistory()">履歴リセット</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+
+      <div class="card">
+        <h2>バックアップ</h2>
+        <p class="muted">データはこの端末のブラウザ内に保存されます。念のため、たまにバックアップを保存してください。</p>
+        <div class="button-row">
+          <button class="secondary-button" onclick="exportBackup()">バックアップ出力</button>
+          <button class="secondary-button" onclick="document.getElementById('importFile').click()">バックアップ読み込み</button>
+          <input id="importFile" class="hidden-input" type="file" accept="application/json" onchange="importBackup(event)" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>使うときの注意</h2>
+        <div class="notice">
+          このルーレットは、授業や学級活動での指名・順番決めを補助するためのものです。<br>
+          公平性が強く求められる場面では「完全ランダム」を使ってください。<br>
+          子どもに見せる時は「完全に公平なくじ」と言い切らず、「今日のチャレンジャーを選びます」くらいの表現がおすすめです。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "teacherRouletteApp_v1";
+
+    const todayKey = () => {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
+    const defaultState = {
+      classCount: 40,
+      drawMode: "random",
+      exclusionDate: todayKey(),
+      exclusions: [],
+      history: []
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return { ...defaultState };
+
+      try {
+        const parsed = JSON.parse(saved);
+        const merged = { ...defaultState, ...parsed };
+
+        if (merged.exclusionDate !== todayKey()) {
+          merged.exclusionDate = todayKey();
+          merged.exclusions = [];
+        }
+
+        return merged;
+      } catch {
+        return { ...defaultState };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      renderAll();
+    }
+
+    function showScreen(screen) {
+      document.getElementById("childScreen").classList.toggle("active", screen === "child");
+      document.getElementById("teacherScreen").classList.toggle("active", screen === "teacher");
+      document.getElementById("childTab").classList.toggle("active", screen === "child");
+      document.getElementById("teacherTab").classList.toggle("active", screen === "teacher");
+    }
+
+    function numbers() {
+      return Array.from({ length: state.classCount }, (_, i) => i + 1);
+    }
+
+    function todayHistoryNumbers() {
+      const today = todayKey();
+      return state.history
+        .filter(item => item.dateKey === today)
+        .map(item => item.number);
+    }
+
+    function availableNumbers() {
+      return numbers().filter(n => !state.exclusions.includes(n));
+    }
+
+    function candidatesForDraw() {
+      const available = availableNumbers();
+
+      if (state.drawMode === "notYetToday") {
+        const already = todayHistoryNumbers();
+        const notYet = available.filter(n => !already.includes(n));
+        return notYet.length > 0 ? notYet : available;
+      }
+
+      return available;
+    }
+
+    function randomPick(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function startRoulette() {
+      const candidates = candidatesForDraw();
+
+      if (candidates.length === 0) {
+        alert("抽選できる番号がありません。除外設定を確認してください。");
+        return;
+      }
+
+      const display = document.getElementById("numberDisplay");
+      const result = document.getElementById("resultMessage");
+      const button = document.getElementById("startButton");
+
+      button.disabled = true;
+      result.textContent = "";
+      display.classList.add("spinning");
+
+      let count = 0;
+      const interval = setInterval(() => {
+        display.textContent = randomPick(candidates);
+        count++;
+
+        if (count > 22) {
+          clearInterval(interval);
+
+          const winner = randomPick(candidates);
+          display.textContent = winner;
+          display.classList.remove("spinning");
+          result.textContent = `${winner}番、お願いします！`;
+
+          addHistory(winner);
+          button.disabled = false;
+        }
+      }, 70);
+    }
+
+    function addHistory(number) {
+      const now = new Date();
+      state.history.unshift({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        number,
+        mode: state.drawMode,
+        dateKey: todayKey(),
+        createdAt: now.toISOString()
+      });
+
+      state.history = state.history.slice(0, 300);
+      saveState();
+    }
+
+    function saveClassCount() {
+      const input = document.getElementById("classCount");
+      const value = Number(input.value);
+
+      if (!Number.isInteger(value) || value < 1 || value > 60) {
+        alert("クラス人数は1〜60人で入力してください。");
+        return;
+      }
+
+      state.classCount = value;
+      state.exclusions = state.exclusions.filter(n => n <= value);
+      saveState();
+      alert("クラス人数を保存しました。");
+    }
+
+    function saveDrawMode() {
+      const selected = document.querySelector("input[name='drawMode']:checked");
+      state.drawMode = selected ? selected.value : "random";
+      saveState();
+    }
+
+    function toggleExclusion(number) {
+      if (state.exclusions.includes(number)) {
+        state.exclusions = state.exclusions.filter(n => n !== number);
+      } else {
+        state.exclusions.push(number);
+      }
+      saveState();
+    }
+
+    function clearExclusions() {
+      if (!confirm("今日だけ除外をすべて外しますか？")) return;
+      state.exclusions = [];
+      saveState();
+    }
+
+    function clearHistory() {
+      if (!confirm("当選履歴をすべて削除しますか？")) return;
+      state.history = [];
+      saveState();
+    }
+
+    function formatDateTime(iso) {
+      const d = new Date(iso);
+      const m = d.getMonth() + 1;
+      const day = d.getDate();
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      return `${m}/${day} ${hh}:${mm}`;
+    }
+
+    function modeLabel(mode) {
+      if (mode === "notYetToday") return "未当選優先";
+      return "完全ランダム";
+    }
+
+    function renderStudentGrid() {
+      const grid = document.getElementById("studentGrid");
+      grid.innerHTML = "";
+
+      numbers().forEach(number => {
+        const label = document.createElement("label");
+        label.className = "student-check";
+        if (state.exclusions.includes(number)) label.classList.add("excluded");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = state.exclusions.includes(number);
+        checkbox.onchange = () => toggleExclusion(number);
+
+        const span = document.createElement("span");
+        span.textContent = `${number}番`;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        grid.appendChild(label);
+      });
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("historyList");
+
+      if (state.history.length === 0) {
+        list.innerHTML = `<div class="history-item"><span class="muted">まだ履歴はありません。</span></div>`;
+        return;
+      }
+
+      list.innerHTML = "";
+      state.history.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+          <span><span class="badge">${item.number}番</span> ${modeLabel(item.mode)}</span>
+          <span class="muted">${formatDateTime(item.createdAt)}</span>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function renderSettings() {
+      document.getElementById("classCount").value = state.classCount;
+
+      const modeRadio = document.querySelector(`input[name='drawMode'][value='${state.drawMode}']`);
+      if (modeRadio) modeRadio.checked = true;
+
+      const candidates = candidatesForDraw();
+      const info = document.getElementById("targetInfo");
+      info.textContent = `抽選対象：${candidates.length}人 ／ 除外：${state.exclusions.length}人`;
+    }
+
+    function renderAll() {
+      renderSettings();
+      renderStudentGrid();
+      renderHistory();
+    }
+
+    function exportBackup() {
+      const data = {
+        app: "teacher-roulette-app",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        state
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `class-roulette-backup-${todayKey()}.json`;
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+
+          if (!data.state) {
+            alert("バックアップファイルの形式が違います。");
+            return;
+          }
+
+          if (!confirm("現在のデータをバックアップ内容で上書きしますか？")) return;
+
+          state = {
+            ...defaultState,
+            ...data.state
+          };
+
+          if (state.exclusionDate !== todayKey()) {
+            state.exclusionDate = todayKey();
+            state.exclusions = [];
+          }
+
+          saveState();
+          alert("バックアップを読み込みました。");
+        } catch {
+          alert("読み込みに失敗しました。");
+        }
+      };
+
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
